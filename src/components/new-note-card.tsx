@@ -32,7 +32,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
   const handleSaveNote = useCallback((event: FormEvent) => {
     event.preventDefault();
 
-    if (content === "") {
+    if (content.trim() === "") {
       return;
     }
 
@@ -84,8 +84,14 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     }
   }
 
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (!open && content.trim() === '') {
+        setShouldShowOnboarding(true); 
+    }
+  }, [content])
+
   return (
-    <Dialog.Root>
+    <Dialog.Root onOpenChange={handleOpenChange}>
       <Dialog.Trigger className="rounded-md flex flex-col gap-3 text-left bg-slate-700 p-5 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 outline-none">
         <span className="text-sm font-medium text-slate-200">
           Adicionar nota
@@ -99,8 +105,12 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
 
       <Dialog.Portal>
         <Dialog.Overlay className="inset-0 fixed bg-black/50" />
-        <Dialog.Content className="fixed overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none">
-          <Dialog.Close className="absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
+
+        <Dialog.Content 
+          className="fixed overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none"
+        >
+          <Dialog.Close  
+            className="absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
             <X className="size-5" />
           </Dialog.Close>
 
@@ -149,7 +159,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
                 <div className="size-3 rounded-full bg-red-500 animate-pulse" />
                 Gravando! (clique p/ interromper)
               </button>
-            ) : (
+            ) : (content.trim() !== '' ? (
               <button
                 type="button"
                 onClick={handleSaveNote}
@@ -157,7 +167,8 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
               >
                 Salvar nota
               </button>
-            )}
+            ) : null)} 
+
           </form>
         </Dialog.Content>
       </Dialog.Portal>
