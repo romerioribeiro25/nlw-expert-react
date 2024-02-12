@@ -17,11 +17,11 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
   const [shouldShowOnboarding, setShouldShowOnboarding] = useState(true);
   const [content, setContent] = useState("");
 
-  function handleStartEditor() {
+  const handleStartEditor = () => {
     setShouldShowOnboarding(false);
   }
 
-  function handleContentChanged(event: ChangeEvent<HTMLTextAreaElement>) {
+  const handleContentChanged = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(event.target.value);
 
     if (event.target.value === "") {
@@ -29,7 +29,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     }
   }
 
-  function handleSaveNote(event: FormEvent) {
+  const handleSaveNote = (event: FormEvent) => {
     event.preventDefault();
 
     if (content === "") {
@@ -44,7 +44,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     toast.success("Nota criada com sucesso!");
   }
 
-  function handleStartRecording() {
+  const handleStartRecording = () => {
     const isSpeechRecognitionAPIAvailable =
       "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
 
@@ -76,7 +76,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     speechRecognition.start();
   }
 
-  function handleStopRecording() {
+  const handleStopRecording = () => {
     setIsRecording(false);
 
     if (speechRecognition !== null) {
