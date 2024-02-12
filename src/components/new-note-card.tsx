@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
-import { ChangeEvent, FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
 
 interface NewNoteProps {
@@ -21,15 +21,15 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     setShouldShowOnboarding(false);
   }
 
-  const handleContentChanged = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleContentChanged = useCallback((event: ChangeEvent<HTMLTextAreaElement>) => {
     setContent(event.target.value);
 
     if (event.target.value === "") {
       setShouldShowOnboarding(true);
     }
-  }
+  }, [content])
 
-  const handleSaveNote = (event: FormEvent) => {
+  const handleSaveNote = useCallback((event: FormEvent) => {
     event.preventDefault();
 
     if (content === "") {
@@ -42,7 +42,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     setShouldShowOnboarding(true);
 
     toast.success("Nota criada com sucesso!");
-  }
+  }, [content])
 
   const handleStartRecording = () => {
     const isSpeechRecognitionAPIAvailable =
