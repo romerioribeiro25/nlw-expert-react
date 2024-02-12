@@ -21,7 +21,7 @@ export function App() {
     return [];
   });
 
-  function onNoteCreated(content: string) {
+  const onNoteCreated = (content: string) => {
     const newNote = {
       id: crypto.randomUUID(),
       date: new Date(),
@@ -35,7 +35,7 @@ export function App() {
     localStorage.setItem("notes", JSON.stringify(notesArray));
   }
 
-  function onNoteDeleted(id: string) {
+  const onNoteDeleted = (id: string) => {
     const notesArray = notes.filter((note) => {
       return note.id !== id;
     });
@@ -45,7 +45,7 @@ export function App() {
     localStorage.setItem("notes", JSON.stringify(notesArray));
   }
 
-  function handleSearch(event: ChangeEvent<HTMLInputElement>) {
+  const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
 
     setSearch(query);
@@ -54,8 +54,8 @@ export function App() {
   const filteredNotes =
     search !== ""
       ? notes.filter((note) =>
-          note.content.toLocaleLowerCase().includes(search.toLocaleLowerCase())
-        )
+        note.content.toLocaleLowerCase().includes(search.toLocaleLowerCase())
+      )
       : notes;
 
   return (
@@ -76,12 +76,12 @@ export function App() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
         <NewNoteCard onNoteCreated={onNoteCreated} />
 
-        {filteredNotes.map((note) => {
-          return (
-            <NoteCard onNoteDeleted={onNoteDeleted} key={note.id} note={note} />
-          );
-        })}
+        {filteredNotes.map((note) => (
+          <NoteCard onNoteDeleted={onNoteDeleted} key={note.id} note={note} />
+        ))}
       </div>
     </div>
-  );
+  ); 
 }
+
+
