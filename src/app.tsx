@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useMemo, useState, useCallback } from "react";
 import logo from "./assets/logo-nlw-expert.svg";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCard } from "./components/note-card";
@@ -21,29 +21,29 @@ export function App() {
     return [];
   });
 
-  const onNoteCreated = (content: string) => {
+  const onNoteCreated = useCallback((content: string) => {
     const newNote = {
       id: crypto.randomUUID(),
       date: new Date(),
       content,
     };
 
-    const notesArray = [newNote, ...notes];
+    setNotes(prevNotes => {
+      const notesArray = [newNote, ...prevNotes];
+      localStorage.setItem("notes", JSON.stringify(notesArray));
+      
+      return notesArray;
+    })
+  } , [setNotes])
 
-    setNotes(notesArray);
+  const onNoteDeleted = useCallback((id: string) => {
+    setNotes((prevNotes) => {
+      const notesArray = prevNotes.filter((note) => note.id !== id);
+      localStorage.setItem("notes", JSON.stringify(notesArray));
 
-    localStorage.setItem("notes", JSON.stringify(notesArray));
-  }
-
-  const onNoteDeleted = (id: string) => {
-    const notesArray = notes.filter((note) => {
-      return note.id !== id;
-    });
-
-    setNotes(notesArray);
-
-    localStorage.setItem("notes", JSON.stringify(notesArray));
-  }
+      return notesArray;
+    })
+  }, [setNotes])
 
   const handleSearch = (event: ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -51,12 +51,15 @@ export function App() {
     setSearch(query);
   }
 
-  const filteredNotes =
-    search !== ""
-      ? notes.filter((note) =>
+  const filteredNotes = useMemo(() => {
+    if (search.trim() !== "") {
+      return notes.filter((note) => 
         note.content.toLocaleLowerCase().includes(search.toLocaleLowerCase())
       )
-      : notes;
+    }
+
+    return notes
+  }, [search, notes])
 
   return (
     <div className="mx-auto max-w-6xl my-12 space-y-6 px-5">
