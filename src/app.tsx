@@ -1,4 +1,5 @@
 import { ChangeEvent, useMemo, useState, useCallback } from "react";
+import { Helmet, HelmetProvider } from 'react-helmet-async';
 import logo from "./assets/logo-nlw-expert.svg";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCard } from "./components/note-card";
@@ -64,33 +65,46 @@ export function App() {
     return notes
   }, [search, notes])
 
+  // useEffect(() => {
+  //   const html = document.querySelector('html');
+  //   if (html) {
+  //     html.classList.toggle('dark', theme === 'dark');
+  //   }
+  // }, [theme]);
+
   return ( 
-    <div className="mx-auto max-w-6xl my-12 space-y-6 px-5">
-      <img src={logo} alt="NLW Expert" />
+    <HelmetProvider>
+      <Helmet>
+        <html className={theme === 'dark' ? 'dark' : ''} />
+      </Helmet>
 
-      <button onClick={toggleTheme} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
-        {theme === 'dark' ? 'Mudar para Modo Claro' : 'Mudar para Modo Escuro'}
-      </button>
+      <div className="mx-auto max-w-6xl my-12 space-y-6 px-5">
+        <img src={logo} alt="NLW Expert" />
 
-      <form className="w-full">
-        <input
-          type="text"
-          placeholder="Busque em suas notas..."
-          className="w-full bg-transparent text-3xl font-semibold tracking-tight outline-none placeholder:text-state-500"
-          onChange={handleSearch}
-        />
-      </form>
+        <button onClick={toggleTheme} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
+          {theme === 'dark' ? 'Mudar para Modo Claross' : 'Mudar para Modo Escuro'}
+        </button>
 
-      <div className="h-px bg-slate-200 dark:bg-slate-700" />
+        <form className="w-full">
+          <input
+            type="text"
+            placeholder="Busque em suas notas..."
+            className="w-full bg-transparent text-3xl font-semibold tracking-tight outline-none placeholder:text-state-500"
+            onChange={handleSearch}
+          />
+        </form>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
-        <NewNoteCard onNoteCreated={onNoteCreated} />
+        <div className="h-px bg-slate-200 dark:bg-slate-700" />
 
-        {filteredNotes.map((note) => (
-          <NoteCard onNoteDeleted={onNoteDeleted} key={note.id} note={note} />
-        ))}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 auto-rows-[250px]">
+          <NewNoteCard onNoteCreated={onNoteCreated} />
+
+          {filteredNotes.map((note) => (
+            <NoteCard onNoteDeleted={onNoteDeleted} key={note.id} note={note} />
+          ))}
+        </div>
       </div>
-    </div>
+    </HelmetProvider>
   ); 
 }
 
