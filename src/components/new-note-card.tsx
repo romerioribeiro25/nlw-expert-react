@@ -92,12 +92,12 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
 
   return (
     <Dialog.Root onOpenChange={handleOpenChange}>
-      <Dialog.Trigger className="rounded-md flex flex-col gap-3 text-left bg-slate-700 p-5 hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 outline-none">
-        <span className="text-sm font-medium text-slate-200">
+      <Dialog.Trigger className="rounded-md flex flex-col gap-3 text-left bg-slate-50 dark:bg-slate-800 p-5 hover:ring-2 hover:ring-slate-200 dark:hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 shadow-md outline-none">
+        <span className="text-sm font-medium text-slite-600 dark:text-slate-200">
           Adicionar nota
         </span>
 
-        <p className="text-sm leading-6 text-slate-400">
+        <p className="text-sm leading-6 text-slate-700 dark:text-slate-400">
           Grave uma nota em áudio que será convertida para texto
           automaticamente.
         </p>
@@ -107,21 +107,21 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
         <Dialog.Overlay className="inset-0 fixed bg-black/50" />
 
         <Dialog.Content 
-          className="fixed overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none"
+          className="fixed overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-white dark:bg-slate-700 md:rounded-md flex flex-col outline-none"
         >
           <Dialog.Close  
-            className="absolute right-0 top-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
+            className="absolute right-2 top-2 rounded-full hover:bg-slate-800/20 dark:hover:bg-slate-800/60 p-1.5 text-slate-600 dark:text-slate-200 hover:text-white dark:hover:text-slate-400 transition duration-300">
             <X className="size-5" />
           </Dialog.Close>
 
           <form className="flex-1 flex flex-col">
             <div className="flex flex-1 flex-col gap-3 p-5">
-              <span className="text-sm font-medium text-slate-300">
+              <span className="text-sm font-medium text-slite-600 dark:text-slate-300">
                 Adicionar nota
               </span>
 
               {shouldShowOnboarding ? (
-                <p className="text-sm leading-6 text-slate-400">
+                <p className="text-sm leading-6 text-slate-700 dark:text-slate-400">
                   Comece{" "}
                   <button
                     type="button"
@@ -143,7 +143,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
               ) : (
                 <textarea
                   autoFocus
-                  className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
+                  className="text-sm leading-6 text-slate-700 dark:text-slate-400 bg-transparent resize-none flex-1 outline-none"
                   onChange={handleContentChanged}
                   value={content}
                 />
@@ -163,7 +163,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
               <button
                 type="button"
                 onClick={handleSaveNote}
-                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
+                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:opacity-75 dark:hover:opacity-65 transition duration-300"
               >
                 Salvar nota
               </button>
