@@ -1,13 +1,16 @@
-import React, { createContext, useCallback, useContext, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
-type Theme = 'light' | 'dark'
+type Theme = 'light' | 'dark' | 'system'
+
+type UserPrefersTheme = 'light' | 'dark';
 
 interface ThemeContextType {
   theme: Theme;
-  toggleTheme: () => void;
+  setPrefersTheme: (prefersTheme: Theme) => void;
+  userPrefersTheme: UserPrefersTheme;
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const ThemeContext = createContext({} as ThemeContextType)
 
 export function useTheme() {
   const context = useContext(ThemeContext)
@@ -20,29 +23,53 @@ export function useTheme() {
 
 interface ThemeProviderProps {
   children: React.ReactNode;
-}
+} 
 
 export function ThemeProvider({ children}: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(() => {
+  const [theme, setTheme] = useState<Theme>(() => { 
     const themeOnStorage = localStorage.getItem('theme');
-    if (themeOnStorage && ['dark', 'light'].includes(themeOnStorage)) {
+    if (themeOnStorage && ['dark', 'light', 'system'].includes(themeOnStorage)) { 
       return themeOnStorage as Theme
     }
 
     return 'dark';
   });
 
-  const toggleTheme = useCallback(() => {
-    setTheme((prevTheme) => {
-      const themeNewValue = (prevTheme === 'dark' ? 'light' : 'dark')
-      localStorage.setItem('theme', themeNewValue)
+  // const windowPrefersColorScheme = useMemo<UserPrefersTheme>(() => {
+  //   const prefersColorShemeDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  //   return prefersColorShemeDark ? 'dark' : 'light';
+  // }, []);
 
-      return themeNewValue
-    })
+  const [windowPrefersColorScheme, setWindowPrefersColorScheme] = useState<UserPrefersTheme>(() => { 
+    const prefersColorShemeDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    return prefersColorShemeDark ? 'dark' : 'light';
+  }); 
+
+  useEffect(() => {
+    const handleColorSchemeChange = () => {
+      setWindowPrefersColorScheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    };
+
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', handleColorSchemeChange);
+
+    return () => {
+      window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', handleColorSchemeChange);
+    };
+  }, []);
+
+  const setPrefersTheme = useCallback((prefersTheme: Theme) => {
+    localStorage.setItem('theme', prefersTheme)
+    setTheme(prefersTheme)
   }, [setTheme]);
-  
+
+  const userPrefersTheme = useMemo(() => (theme === 'system') ? windowPrefersColorScheme: theme, [theme, windowPrefersColorScheme]);
+
+  const memoizedValue = useMemo(() => ({
+    theme, setPrefersTheme, userPrefersTheme 
+  }), [theme, setPrefersTheme, userPrefersTheme]);
+ 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={memoizedValue}>
       {children}
     </ThemeContext.Provider>
   )

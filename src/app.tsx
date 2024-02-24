@@ -11,8 +11,8 @@ interface Note {
   content: string;
 }
 
-export function App() {
-  const { theme, toggleTheme } = useTheme();
+function App() {
+  const { setPrefersTheme, userPrefersTheme } = useTheme();
   const [search, setSearch] = useState("");
 
   const [notes, setNotes] = useState<Note[]>(() => {
@@ -63,26 +63,29 @@ export function App() {
     }
 
     return notes
-  }, [search, notes])
+  }, [search, notes]);
 
-  // useEffect(() => {
-  //   const html = document.querySelector('html');
-  //   if (html) {
-  //     html.classList.toggle('dark', theme === 'dark');
-  //   }
-  // }, [theme]);
+  const helmetHtmlClassName = useMemo(() => userPrefersTheme, [userPrefersTheme]);
 
   return ( 
     <HelmetProvider>
       <Helmet>
-        <html className={theme === 'dark' ? 'dark' : ''} />
+        <html className={helmetHtmlClassName} />
       </Helmet>
 
       <div className="mx-auto max-w-6xl my-12 space-y-6 px-5">
         <img src={logo} alt="NLW Expert" />
 
-        <button onClick={toggleTheme} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
-          {theme === 'dark' ? 'Mudar para Modo Claross' : 'Mudar para Modo Escuro'}
+        <button onClick={() => setPrefersTheme('light')} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
+          Mudar para Modo Claro
+        </button>
+
+        <button onClick={() => setPrefersTheme('dark')} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
+          Mudar para Modo Escuro
+        </button>
+
+        <button onClick={() => setPrefersTheme('system')} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
+          Mudar para Modo system
         </button>
 
         <form className="w-full">
@@ -106,7 +109,7 @@ export function App() {
       </div>
     </HelmetProvider>
   ); 
-}
+} 
 
 export function ThemedApp() {
   return (
@@ -114,6 +117,5 @@ export function ThemedApp() {
       <App />
     </ThemeProvider>
   );
-}
-
+} 
 
