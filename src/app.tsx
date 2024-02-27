@@ -1,6 +1,6 @@
 import { ChangeEvent, useMemo, useState, useCallback } from "react";
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import logo from "./assets/logo-nlw-expert.svg";
+import { Navbar } from "./components/navbar";
 import { NewNoteCard } from "./components/new-note-card";
 import { NoteCard } from "./components/note-card";
 import { ThemeProvider, useTheme } from "./context/theme";
@@ -12,7 +12,7 @@ interface Note {
 }
 
 function App() {
-  const { setPrefersTheme, userPrefersTheme } = useTheme();
+  const { userPrefersTheme } = useTheme();
   const [search, setSearch] = useState("");
 
   const [notes, setNotes] = useState<Note[]>(() => {
@@ -74,20 +74,7 @@ function App() {
       </Helmet>
 
       <div className="mx-auto max-w-6xl my-12 space-y-6 px-5">
-        <img src={logo} alt="NLW Expert" />
-
-        <button onClick={() => setPrefersTheme('light')} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
-          Mudar para Modo Claro
-        </button>
-
-        <button onClick={() => setPrefersTheme('dark')} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
-          Mudar para Modo Escuro
-        </button>
-
-        <button onClick={() => setPrefersTheme('system')} className="text-xs leading-5 font-semibold bg-slate-400/10 rounded-full py-1 px-3 flex items-center space-x-2 hover:bg-slate-400/20">
-          Mudar para Modo system
-        </button>
-
+        <Navbar />
         <form className="w-full">
           <input
             type="text"
