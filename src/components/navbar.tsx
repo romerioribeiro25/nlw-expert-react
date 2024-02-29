@@ -1,7 +1,8 @@
 import { useMemo } from "react";
-import { Theme, useTheme } from "../context/theme";
-import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { Sun, MoonStar, Monitor, LucideIcon,  } from "lucide-react";
+import { tv } from "tailwind-variants";
+import { Theme, useTheme } from "../context/theme";
 import logo from "../assets/logo-nlw-expert.svg";
 
 type ThemeIcons = {
@@ -17,7 +18,34 @@ const themeIcons: ThemeIcons = {
 interface IconProps {
   theme: Theme;
   className: string;
-}
+};
+
+const navbarTv = tv ({
+  slots: { 
+    contentNavbar: "flex items-center justify-between",
+    contentDropdown: 
+      "bg-white dark:bg-slate-700 rounded-md text-sm font-semibold ring-1 ring-slate-900/10 shadow-lg w-36 overflow-hidden",
+    buttonIconDropdown:
+        "rounded-full hover:bg-slate-800/5 dark:hover:bg-slate-800/60 p-1.5 text-lime-600 dark:text-lime-400 hover:text-lime-800 dark:hover:text-lime-600 transition duration-300",
+    itemDropdown:
+      "py-2 px-3 flex items-center cursor-pointer text-slate-700 dark:text-white hover:bg-slate-100 dark:hover:bg-slate-600 gap-3 focus-visible:bg-slate-100 dark:focus-visible:bg-slate-600 outline-none",
+    itemIconDropdown: "size-5 text-slate-400",
+  },
+  variants: {
+    isSelectedItemDropdown: {
+      true: {
+        itemDropdown: "text-lime-600 dark:text-lime-500 bg-slate-50 dark:bg-slate-500/20",
+        itemIconDropdown: "text-lime-600 dark:text-lime-500",
+      }
+    }
+  },
+  compoundSlots: [
+    {
+      slots: ["contentDropdown", "buttonIconDropdown"],
+      className: "focus-visible:ring-2 focus-visible:ring-lime-400 outline-none"
+    }
+  ]
+});
 
 const DynamicIcon: React.FC<IconProps> = ({ theme, className }) => {
   const Icon = useMemo(() => themeIcons[theme], [theme]);
@@ -29,30 +57,34 @@ export function Navbar() {
   const themeOptions: Theme[] = ['light', 'dark', 'system'];
   const ThemeIcon = useMemo(() => (theme === 'light' ? themeIcons[theme]: themeIcons['dark']), [theme]);
 
+  const { contentNavbar, contentDropdown, buttonIconDropdown, itemDropdown, itemIconDropdown } = navbarTv();
+
   return (
-    <div className="flex items-center justify-between">
+    <div className={contentNavbar()}>
       <img src={logo} alt="NLW Expert" />
 
       <DropdownMenu.Root>
-        <DropdownMenu.Trigger asChild>
-          <button className="rounded-full hover:bg-slate-800/5 dark:hover:bg-slate-800/60 p-1.5 text-lime-600 dark:text-lime-400 hover:text-lime-800 dark:hover:text-lime-600 transition duration-300">
+        <DropdownMenu.Trigger asChild className="">
+          <button className={buttonIconDropdown()}>
             <ThemeIcon className="size-6" />
           </button>
         </DropdownMenu.Trigger>
 
         <DropdownMenu.Portal>
           <DropdownMenu.Content 
-            className="bg-white rounded-md text-sm ring-1 ring-slate-900/10 shadow-lg w-36 overflow-hidden outline-none" 
+            className={contentDropdown()}
             sideOffset={10}
-            align="center"
           >
             {themeOptions.map((themeOption, index) => (
               <DropdownMenu.Item 
                 key={index}
-                className="py-2 px-3 flex items-center cursor-pointer hover:bg-slate-100 gap-2 text-slate-700 outline-none"
-                onClick={() => setPrefersTheme(themeOption)}
+                className={itemDropdown({ isSelectedItemDropdown: (themeOption === theme)})}
+                onClick={() => setPrefersTheme(themeOption)} 
               >
-                <DynamicIcon theme={themeOption} className="size-5" />
+                <DynamicIcon 
+                  theme={themeOption} 
+                  className={itemIconDropdown({ isSelectedItemDropdown: (themeOption === theme)})} 
+                />
                 {themeOption.charAt(0).toUpperCase() + themeOption.slice(1)}
               </DropdownMenu.Item>
             ))}
