@@ -2,6 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { X } from "lucide-react";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "./button";
 
 interface NewNoteProps {
   onNoteCreated: (content: string) => void;
@@ -19,30 +20,36 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
 
   const handleStartEditor = () => {
     setShouldShowOnboarding(false);
-  }
+  };
 
-  const handleContentChanged = useCallback((event: ChangeEvent<HTMLTextAreaElement>) => {
-    setContent(event.target.value);
+  const handleContentChanged = useCallback(
+    (event: ChangeEvent<HTMLTextAreaElement>) => {
+      setContent(event.target.value);
 
-    if (event.target.value === "") {
+      if (event.target.value === "") {
+        setShouldShowOnboarding(true);
+      }
+    },
+    [content],
+  );
+
+  const handleSaveNote = useCallback(
+    (event: FormEvent) => {
+      event.preventDefault();
+
+      if (content.trim() === "") {
+        return;
+      }
+
+      onNoteCreated(content);
+
+      setContent("");
       setShouldShowOnboarding(true);
-    }
-  }, [content])
 
-  const handleSaveNote = useCallback((event: FormEvent) => {
-    event.preventDefault();
-
-    if (content.trim() === "") {
-      return;
-    }
-
-    onNoteCreated(content);
-
-    setContent("");
-    setShouldShowOnboarding(true);
-
-    toast.success("Nota criada com sucesso!");
-  }, [content])
+      toast.success("Nota criada com sucesso!");
+    },
+    [content],
+  );
 
   const handleStartRecording = () => {
     const isSpeechRecognitionAPIAvailable =
@@ -74,7 +81,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     };
 
     speechRecognition.start();
-  }
+  };
 
   const handleStopRecording = () => {
     setIsRecording(false);
@@ -82,18 +89,22 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     if (speechRecognition !== null) {
       speechRecognition.stop();
     }
-  }
+  };
 
-  const handleOpenChange = useCallback((open: boolean) => {
-    if (!open && content.trim() === '') {
-        setShouldShowOnboarding(true); 
-    }
-  }, [content])
+  const handleOpenChange = useCallback(
+    (open: boolean) => {
+      if (!open && content.trim() === "") {
+        setShouldShowOnboarding(true);
+        handleStopRecording();
+      }
+    },
+    [content],
+  );
 
   return (
     <Dialog.Root onOpenChange={handleOpenChange}>
-      <Dialog.Trigger className="rounded-md flex flex-col gap-3 text-left bg-slate-50 dark:bg-slate-800 p-5 hover:ring-2 hover:ring-slate-200 dark:hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400 shadow-md outline-none">
-        <span className="text-sm font-medium text-slite-600 dark:text-slate-200">
+      <Dialog.Trigger className="flex flex-col gap-3 rounded-md bg-slate-50 p-5 text-left shadow-md outline-none hover:ring-2 hover:ring-slate-200 focus-visible:ring-2 focus-visible:ring-lime-400 dark:bg-slate-800 dark:hover:ring-slate-600">
+        <span className="text-slite-600 text-sm font-medium dark:text-slate-200">
           Adicionar nota
         </span>
 
@@ -104,46 +115,35 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="inset-0 fixed bg-black/50" />
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
 
-        <Dialog.Content 
-          className="fixed overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-white dark:bg-slate-700 md:rounded-md flex flex-col outline-none"
-        >
-          <Dialog.Close  
-            className="absolute right-2 top-2 rounded-full hover:bg-slate-800/20 dark:hover:bg-slate-800/60 p-1.5 text-slate-600 dark:text-slate-200 hover:text-white dark:hover:text-slate-400 transition duration-300">
+        <Dialog.Content className="fixed inset-0 flex w-full flex-col overflow-hidden bg-white outline-none dark:bg-slate-700 md:inset-auto md:left-1/2 md:top-1/2 md:h-[60vh] md:max-w-[640px] md:-translate-x-1/2 md:-translate-y-1/2 md:rounded-md">
+          <Dialog.Close className="absolute right-2 top-2 rounded-full p-1.5 text-slate-600 transition duration-300 hover:bg-slate-800/20 hover:text-white dark:text-slate-200 dark:hover:bg-slate-800/60 dark:hover:text-slate-400">
             <X className="size-5" />
           </Dialog.Close>
 
-          <form className="flex-1 flex flex-col">
+          <form className="flex flex-1 flex-col">
             <div className="flex flex-1 flex-col gap-3 p-5">
-              <span className="text-sm font-medium text-slite-600 dark:text-slate-300">
+              <span className="text-slite-600 text-sm font-medium dark:text-slate-300">
                 Adicionar nota
               </span>
 
               {shouldShowOnboarding ? (
                 <p className="text-sm leading-6 text-slate-700 dark:text-slate-400">
                   Comece{" "}
-                  <button
-                    type="button"
-                    onClick={handleStartRecording}
-                    className="font-medium text-lime-400 hover:underline"
-                  >
+                  <Button type="button" onClick={handleStartRecording}>
                     gravando uma nota
-                  </button>{" "}
+                  </Button>{" "}
                   em áudio ou se preferir{" "}
-                  <button
-                    type="button"
-                    onClick={handleStartEditor}
-                    className="font-medium text-lime-400 hover:underline"
-                  >
+                  <Button type="button" onClick={handleStartEditor}>
                     utilize apenas texto
-                  </button>
+                  </Button>
                   .
                 </p>
               ) : (
                 <textarea
                   autoFocus
-                  className="text-sm leading-6 text-slate-700 dark:text-slate-400 bg-transparent resize-none flex-1 outline-none"
+                  className="flex-1 resize-none bg-transparent text-sm leading-6 text-slate-700 outline-none dark:text-slate-400"
                   onChange={handleContentChanged}
                   value={content}
                 />
@@ -151,24 +151,27 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
             </div>
 
             {isRecording ? (
-              <button
+              <Button
                 type="button"
+                color="lime"
+                size="sm"
                 onClick={handleStopRecording}
-                className="w-full flex items-center justify-center gap-2 bg-slate-900 py-4 text-center text-sm text-slate-300 outline-none font-medium hover:text-slate-100"
+                className="flex w-full items-center justify-center gap-2"
               >
-                <div className="size-3 rounded-full bg-red-500 animate-pulse" />
+                <div className="size-3 animate-pulse rounded-full bg-red-500" />
                 Gravando! (clique p/ interromper)
-              </button>
-            ) : (content.trim() !== '' ? (
-              <button
+              </Button>
+            ) : content.trim() !== "" ? (
+              <Button
                 type="button"
+                color="lime"
+                size="sm"
                 onClick={handleSaveNote}
-                className="w-full bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:opacity-75 dark:hover:opacity-65 transition duration-300"
+                className="w-full text-center"
               >
                 Salvar nota
-              </button>
-            ) : null)} 
-
+              </Button>
+            ) : null}
           </form>
         </Dialog.Content>
       </Dialog.Portal>
