@@ -5,7 +5,7 @@ const button = tv({
   base: "font-medium outline-none transition duration-300",
   variants: {
     color: {
-      transparent: "text-lime-400 hover:underline",
+      transparent: "text-lime-500 hover:underline",
       lime: "bg-lime-500 text-white hover:bg-lime-700",
     },
     size: {
