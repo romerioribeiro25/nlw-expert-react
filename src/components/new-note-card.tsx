@@ -32,6 +32,8 @@ const newNoteCardTv = tv({
     noteTextarea:
       "flex-1 resize-none bg-transparent text-sm leading-6 text-slate-700 outline-none dark:text-slate-400",
     recordingFeedback: "size-3 animate-pulse rounded-full bg-red-500",
+    stopRecordingButton: "flex w-full items-center justify-center gap-2",
+    saveNoteButton: "w-full text-center",
   },
 });
 
@@ -136,6 +138,8 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
     onboardingText,
     noteTextarea,
     recordingFeedback,
+    stopRecordingButton,
+    saveNoteButton,
   } = newNoteCardTv();
 
   return (
@@ -189,7 +193,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
                 color="lime"
                 size="sm"
                 onClick={handleStopRecording}
-                className="flex w-full items-center justify-center gap-2"
+                className={stopRecordingButton()}
               >
                 <div className={recordingFeedback()} />
                 Gravando! (clique p/ interromper)
@@ -200,7 +204,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteProps) {
                 color="lime"
                 size="sm"
                 onClick={handleSaveNote}
-                className="w-full text-center"
+                className={saveNoteButton()}
               >
                 Salvar nota
               </Button>
